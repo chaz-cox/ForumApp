@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id = "app">
+        <div id = "Login" v-if="page == 'Login'">
+            <h1>Login Forum</h1>
+            <input placeholder="email" v-model="loginEmailInput">
+            <input placeholder="password" type="password" v-model="loginPasswordInput">
+            <button @click="postSession()">Login</button>
+            <p> or </p>
+            <button @click="page = 'Register'" @click="message = ''">Register</button>
+            {{message}}
+        </div>
+
+        <div id= "Register" v-if="page == 'Register'">
+            <h1>Register</h1>
+            <input placeholder="email" type="email" v-model="newEmailInput">
+            <input placeholder="password" type="password" v-model="newPasswordInput">
+            <input placeholder="name" type="text" v-model="newNameInput">
+            <button @click="postUser()">Create Account</button>
+            <button @click="page = 'Login'" @click="message = ''">Back To Login</button>
+            {{message}}
+        </div>
+        
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src= "app.js"></script>
+</body>
+</html>
