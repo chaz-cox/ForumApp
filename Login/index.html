@@ -11,11 +11,11 @@
     <div id = "app">
         <div id = "Login" v-if="page == 'Login'">
             <h1>Login Forum</h1>
-            <input placeholder="email" v-model="loginEmailInput">
-            <input placeholder="password" type="password" v-model="loginPasswordInput">
-            <button @click="postSession()">Login</button>
+            <input placeholder="email" v-model="loginEmailInput"> <br>
+            <input placeholder="password" type="password" v-model="loginPasswordInput"> <br>
+            <button @click="postSession()">Login</button><br>
             <p> or </p>
-            <button @click="page = 'Register'" @click="message = ''">Register</button>
+            <button @click="page = 'Register'" @click="message = ''">Register</button><br>
             {{message}}
         </div>
 
@@ -27,6 +27,10 @@
             <button @click="postUser()">Create Account</button>
             <button @click="page = 'Login'" @click="message = ''">Back To Login</button>
             {{message}}
+        </div>
+
+        <div id= "Home" v-if="page == 'Home'">
+            <h1>Welcome, {{name}}</h1>
         </div>
         
 

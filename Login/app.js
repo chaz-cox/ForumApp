@@ -14,6 +14,7 @@ var app = new Vue({
         data: {
             page : "Login",
             message : "",
+            name: "person",
 
             loginEmailInput:"",
             loginPasswordInput:"",
@@ -61,6 +62,7 @@ var app = new Vue({
                 this.message = "Success";
                 this.loginEmailInput = "";
                 this.loginPasswordInput = "";
+                this.page = 'Home';
                 
             }else if(response.status == 401){
                 console.log("Unsuccessful");
