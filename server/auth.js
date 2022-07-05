@@ -1,12 +1,13 @@
+const {use} = require("passport");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const {User} = require("../persist/model");
 
 passport.use(
-    passport.use(new LocalStrategy(username, password, done) =>{
+    new LocalStrategy(async (username, password, done) =>{
         let user;
         try{
-            user = await User.findOne({"username":username, "password":password});
+            user = await User.findOne({username: username, password:password});
             if (!user){
                 return done(null,false);
             }
@@ -17,12 +18,16 @@ passport.use(
     })
 );
 
-const setUpAuth = function {app} {
-    app.use(passport.initualize());
+const setUpAuth = function (app) {
+    app.use(passport.initialize());
     app.use(passport.authenticate("session"));
 
     passport.serializeUser(function (user, cb) {
-        cb(null, {id: user._id, username: user.username });
+        cb(null, {
+            id: user._id, 
+            username: user.username,
+            fullname: user.fullname,
+        });
     });
     passport.deserializeUser(function (user, cb){
         return cb(null, user);
@@ -30,7 +35,7 @@ const setUpAuth = function {app} {
 
     app.post("/session",passport.authenticate("local"), (req, res) =>{
         res.status(201).json({ 
-            message: "Successfully created session"
+            message: "Successfully created session",
             username: req.user.username,
             fullname: req.user.fullname,
         });
@@ -42,7 +47,7 @@ const setUpAuth = function {app} {
             return;
         }
         res.status(200).json({ 
-            message : "authed"
+            message : "authed",
             username: req.user.username,
             fullname: req.user.fullname,
         });

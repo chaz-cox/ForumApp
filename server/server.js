@@ -1,5 +1,5 @@
 const express = require('express');
-const { User } = require("./persist/model");
+const { User, Thread } = require("../persist/model");
 const setUpAuth = require("./auth");
 const setUpSession = require("./session");
 const app = express();
@@ -28,7 +28,7 @@ app.post("/users", async (req, res) => {
     }
 });
 
-app.post("/thread",(req, res) => {
+app.post("/thread", async (req, res) => {
     if (!req.user){
         res.status(401).json({ message: "unauthed"});
         return;
