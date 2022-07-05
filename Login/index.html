@@ -30,9 +30,49 @@
         </div>
 
         <div id= "Home" v-if="page == 'Home'">
-            <h1>Welcome, {{name}}</h1>
+            <nav>
+                <h1>Welcome, </h1>
+                <button id ="create" @click="page = 'Create_Thread'"><h2>Create a Thread!</h2></button>
+            </nav>
+            <div class="wrapper">
+                <div v-for= "t in threads" class="thread" @click="gotoThreadPage(t._id)">
+                    <h2 style="text-align: center;">{{t.name}}</h2>
+                    <p style="float: right; font-size: 10px;">-<b> {{t.user.fullname}}</b></p>
+                    <!-- <p>{{thread.description}}</h2> -->
+                </div>
+            </div>
         </div>
-        
+
+        <div id="Thread" v-if= "page == 'Thread'">
+            <button @click="page='Home'">Back</button>
+            <br>
+            <h1>{{thread.name}}</h1>
+            <br>
+            <h3>{{thread.description}}</h3>
+            <br>
+            <h4>{{thread.user.fullname}}</h4>
+            <br>
+            <input placeholder="post something here!" v-model="postInput">
+            <button @click="submitPost(thread._id)">Post</button>
+            <div class="postwrapper">
+                <div v-for= "p in thread.posts" class= "post">
+                    <h2>{{p.user.fullname}}:</h2>
+                    <p>{{p.body}}</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="Create_Thread" v-if="page == 'Create_Thread'">
+            <h1>Create a Thread!</h1>
+            <input placeholder="Name of Thread..." v-model="threadNameInput">
+            <br>
+            <input placeholder="Description..." v-model="threadDescriptionInput">
+            <br>
+            <input placeholder="Category..." v-model="threadCategoryInput">
+            <br>
+            <button @click="postThread()">Post Thread</button>
+            <button @click="page = 'Home'">Back</button>
+        </div>
 
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
