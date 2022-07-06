@@ -53,7 +53,7 @@ app.get("/thread/:id",async (req,res) => {
     let ID = req.params.id;
     let threadPosts
     try{
-        threadPosts = await thread.findById(ID);
+        threadPosts = await Thread.findById(ID);
         if (!threadPosts){
             res.status(401).json({
                 message: "thead not found",
@@ -148,6 +148,22 @@ app.post("/post", async (req, res) =>{
         }
         res.status(201).json(thread.posts[thread.post.length -1 ]);
 });
+
+app.delete("/thread/id", async (req , res) =>{
+    if (!req.user){
+        res.status(404).json({ message: "unauthed"});
+    }
+    let thread;
+    try{
+        thread = await Thread.findbyId(req.params.id);
+        if(!thread){
+            res.status(401).json({
+                message: "thread not found",
+            });
+            return;
+        });
+//fix later
+
 
 module.exports = app;
 
