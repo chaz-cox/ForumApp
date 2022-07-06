@@ -76,6 +76,18 @@ app.get("/thread/:id",async (req,res) => {
             error: err,
         });
     }
+    for (i=0 ; i<threadPosts.posts.length; i++){
+        try{
+            threadPosts.posts[i] = threadPosts.posts[i].toObject();
+            let user = await User.findById(threadPosts.posts[i].user_id, "-password");
+            threadPosts.posts[i].user = user;
+        }catch (err){
+            res.status(500).json({
+            message: "failed to find thread",
+            error: err,
+        });
+        }
+    }
     res.status(200).json(threadPosts);
 });
 
@@ -122,11 +134,12 @@ app.post("/post", async (req, res) =>{
         );
         if (!thread) {
             res.status(404).json({
-                message: `thread not found`
+                message: `thread not found`,
                 id:req.body.thread_id,
             });
             return;
-        }catch(err){
+        }
+    }catch(err){
             res.status(500).json({
                 message: `failed to insert post`,
                 error: err,
@@ -134,8 +147,7 @@ app.post("/post", async (req, res) =>{
             return;
         }
         res.status(201).json(thread.posts[thread.post.length -1 ]);
-    });
-};
+});
 
 module.exports = app;
 
