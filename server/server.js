@@ -164,6 +164,30 @@ app.delete("/thread/id", async (req , res) =>{
         });
 //fix later
 
+app.delete("/thread/:thead_id/post/:post_id", async (req, res) =>{
+    if(!req.user){
+        res.status(404).json({ message: "unauthed"});
+    }
+    thread = await Thread.findOne({
+        _id: req.params.thead_id,
+        "posts_id": req.params.post_id,
+    });
+
+    if( user._id != thread._id){
+        res.status(500).json({message: "cannot delete thread"});
+        console.log("cannot do it");
+    }
+
+    
+    await Thread.findByIdAndUpdate(req.params.thread_id, {
+        $pull: {
+            posts: {
+                _id: req.params.post_id,
+            },
+        },
+    });
+
+
 
 module.exports = app;
 
