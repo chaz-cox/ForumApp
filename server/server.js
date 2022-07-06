@@ -51,7 +51,25 @@ app.post("/thread", async (req, res) => {
 
 app.get("/thread/:id",(req,res) => {});
 
-app.get("/thread",(req, res) => {});
+app.get("/thread", async (req, res) => {
+    try{
+        let threads = await Thread.find({}, "-posts");
+    }catch(err){
+        console.log("ERROR getting threads");
+    }
+
+    for (i=0 ; i<threads.length; i++){
+        try{
+            threads[i] = threads[i].toObject();
+            let user = await User.findById(threads[i].user_id, "-password");
+            threads[i].user = user;
+        }catch (err){
+            res.status(500).json({
+            message: "failed to find threads",
+            error: err,
+        });
+    }
+});
 
 module.exports = app;
 
