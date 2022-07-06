@@ -49,11 +49,40 @@ app.post("/thread", async (req, res) => {
     }
 });
 
-app.get("/thread/:id",(req,res) => {});
+app.get("/thread/:id",async (req,res) => {
+    let ID = req.params.id;
+    let threadPosts
+    try{
+        threadPosts = await thread.findById(ID);
+        if (!threadPosts){
+            res.status(401).json({
+                message: "thead not found",
+            });
+            return;
+        }
+    }catch(err){
+        res.status(500).json({
+            message: "couldnt get thread",
+            error: err,
+        });
+    }
+
+    try{
+        threadPosts = thread.toObject();
+        threadPosts.user = await User.findById(threadPosts.user_id,"-password");
+    }catch(err){
+        res.status(500).json({
+            message: "couldnt get thread",
+            error: err,
+        });
+    }
+    res.status(200).json(threadPosts);
+});
 
 app.get("/thread", async (req, res) => {
+    let threads;
     try{
-        let threads = await Thread.find({}, "-posts");
+        threads = await Thread.find({}, "-posts");
     }catch(err){
         console.log("ERROR getting threads");
     }
@@ -69,6 +98,8 @@ app.get("/thread", async (req, res) => {
             error: err,
         });
     }
+    }
+    res.status(200).json(threads);
 });
 
 module.exports = app;
