@@ -102,6 +102,41 @@ app.get("/thread", async (req, res) => {
     res.status(200).json(threads);
 });
 
+app.post("/post", async (req, res) =>{
+    let thread;
+    try{
+        thread = await Thread.findByIdAndUpdate(
+            req.body.thead._id,
+            {
+                $push: {
+                    posts:{
+                        user_id: req.user.id,
+                        body: req.body.body,
+                        thread_id: req.body.thread_id,
+                    },
+                },
+            },
+        {
+            new: true,
+        }
+        );
+        if (!thread) {
+            res.status(404).json({
+                message: `thread not found`
+                id:req.body.thread_id,
+            });
+            return;
+        }catch(err){
+            res.status(500).json({
+                message: `failed to insert post`,
+                error: err,
+            });
+            return;
+        }
+        res.status(201).json(thread.posts[thread.post.length -1 ]);
+    });
+};
+
 module.exports = app;
 
 
