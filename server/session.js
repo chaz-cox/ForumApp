@@ -6,7 +6,7 @@ const setUpSessionStore = function (app){
         session({
             secret: config.session_key,
             resave: false,
-            saveUnintialized: false,
+            saveUninitialized: false,
         })
     );
 };

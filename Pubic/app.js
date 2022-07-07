@@ -1,4 +1,4 @@
-URL = "https://forum2022.codeschool.cloud"
+URL = "https://localhost:8080"
 /*vue.component('',{
     template: ``,
     data: function(){

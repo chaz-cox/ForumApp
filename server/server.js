@@ -33,19 +33,22 @@ app.post("/thread", async (req, res) => {
         res.status(401).json({ message: "unauthed"});
         return;
     }
+    let thread;
     try {
-        let thread = await Thread.create({
+        thread = await Thread.create({
             user_id: req.user.id,
             name: req.body.name,
             description: req.body.description,
             category: req.body.category,
         });
-        req.status(201).json(thread);
+        res.status(201).json(thread);
     }catch (err) {
         res.status(500).json({
             message: "could not create thread",
             error: err,
         });
+        console.log(thread);
+        return;
     }
 });
 
@@ -55,7 +58,7 @@ app.get("/thread/:id",async (req,res) => {
     try{
         threadPosts = await Thread.findById(ID);
         if (!threadPosts){
-            res.status(401).json({
+            res.status(404).json({
                 message: "thead not found",
             });
             return;
@@ -65,20 +68,23 @@ app.get("/thread/:id",async (req,res) => {
             message: "couldnt get thread",
             error: err,
         });
+        return;
     }
 
     try{
         threadPosts = thread.toObject();
-        threadPosts.user = await User.findById(threadPosts.user_id,"-password");
+        let user= await User.findById(threadPosts.user_id,"-password");
+        thread.user = user;
     }catch(err){
+        console.log("unable to get userid");
         res.status(500).json({
             message: "couldnt get thread",
             error: err,
         });
     }
-    for (i=0 ; i<threadPosts.posts.length; i++){
+    console.log(threadPosts)
+    for (let i=0 ; i<threadPosts.posts.length; i++){
         try{
-            threadPosts.posts[i] = threadPosts.posts[i].toObject();
             let user = await User.findById(threadPosts.posts[i].user_id, "-password");
             threadPosts.posts[i].user = user;
         }catch (err){
@@ -149,7 +155,7 @@ app.post("/post", async (req, res) =>{
         res.status(201).json(thread.posts[thread.post.length -1 ]);
 });
 
-app.delete("/thread/id", async (req , res) =>{
+/*app.delete("/thread/id", async (req , res) =>{
     if (!req.user){
         res.status(404).json({ message: "unauthed"});
     }
@@ -187,7 +193,7 @@ app.delete("/thread/:thead_id/post/:post_id", async (req, res) =>{
         },
     });
 
-
+*/
 
 module.exports = app;
 
