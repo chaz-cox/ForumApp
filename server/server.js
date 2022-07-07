@@ -120,7 +120,7 @@ app.get("/thread", async (req, res) => {
     res.status(200).json(threads);
 });
 
-app.post("/post", async (req, res) =>{
+app.delete("/thread/:thead_id/post/:post_id", async (req, res) =>{
     let thread;
     try{
         thread = await Thread.findByIdAndUpdate(
@@ -155,22 +155,69 @@ app.post("/post", async (req, res) =>{
         res.status(201).json(thread.posts[thread.post.length -1 ]);
 });
 
-/*app.delete("/thread/id", async (req , res) =>{
+app.delete("/thread/id", async (req , res) =>{
     if (!req.user){
         res.status(404).json({ message: "unauthed"});
     }
     let thread;
+    let post;
     try{
-        thread = await Thread.findbyId(req.params.id);
-        if(!thread){
-            res.status(401).json({
-                message: "thread not found",
-            });
-            return;
+        thread = await Thread.findOne({
+        _id = req.params.thread_id,
+        "posts_id": req.params.post_id,
         });
-//fix later
+    } catch (err) {
+        res.status(500).json({
+            message: `error wrhn finding the post`,
+            error: err,
+        });
+        return;
+    }
 
-app.delete("/thread/:thead_id/post/:post_id", async (req, res) =>{
+    if(!thread){
+        res.status(404).json({
+            message: "thread not found when deleting post",
+            thread_id: req.params.id,
+            post_id: req.params.post_id,
+        });
+        return;
+    }
+
+    let isSameUser = false;
+    for (let k in thread.posts){
+        if (thread._id == req.params.post_id){
+            post = thread.posts[k];
+            if (thread.post[k].user_id == req.user.id){
+                isSameUser = true;
+            }
+        }
+    }
+    if (!isSameUser){
+        res.status(403).json({ message: "unautherized"});
+        return;
+    }
+
+    try{
+        await Thread.findByIdAndUpdate(req.params.thread_id, {
+            $pull: {
+                posts: {
+                    _id: req.params.post_id,
+                },
+            },
+        });
+    } catch (err){
+        res.status(500).json({
+            message: "error deleting post",
+            error: err,
+        });
+        return;
+    }
+    res.status(200).json(post);
+
+});
+
+
+/*app.delete("/thread/:thead_id/post/:post_id", async (req, res) =>{
     if(!req.user){
         res.status(404).json({ message: "unauthed"});
     }
