@@ -110,7 +110,7 @@ app.get("/thread/:id",async (req,res) => {
         threadPosts = await Thread.findById(ID);
         if (!threadPosts){
             res.status(404).json({
-                message: "thead not found",
+                message: "thread not found",
             });
             return;
         }
@@ -123,9 +123,9 @@ app.get("/thread/:id",async (req,res) => {
     }
 
     try{
-        threadPosts = thread.toObject();
+        threadPosts = threadPosts.toObject();
         let user= await User.findById(threadPosts.user_id,"-password");
-        thread.user = user;
+        threadPosts.user = user;
     }catch(err){
         console.log("unable to get userid");
         res.status(500).json({
@@ -186,7 +186,7 @@ app.post("/post", async (req, res) =>{
 
     try{
         thread = await Thread.findByIdAndUpdate(
-            req.body.thead._id,
+            req.body.thread_id,
             {
                 $push: {
                     posts:{
@@ -196,9 +196,9 @@ app.post("/post", async (req, res) =>{
                     },
                 },
             },
-        {
-            new: true,
-        }
+         {
+             new: true,
+         } 
         );
         if (!thread) {
             res.status(404).json({
@@ -214,10 +214,10 @@ app.post("/post", async (req, res) =>{
             });
             return;
         }
-        res.status(201).json(thread.posts[thread.post.length -1 ]);
+        res.status(201).json(thread.posts[thread.posts.length -1 ]);
 });
 
-app.delete("/thread/:thead_id/post/:post_id", async (req, res) =>{
+app.delete("/thread/:thread_id/post/:post_id", async (req, res) =>{
     if (!req.user){
         res.status(404).json({ message: "unauthed"});
         return;
@@ -252,7 +252,7 @@ app.delete("/thread/:thead_id/post/:post_id", async (req, res) =>{
     for (let k in thread.posts){
         if (thread.posts[k]._id == req.params.post_id){
             post = thread.posts[k];
-            if (thread.post[k].user_id == req.user.id){
+            if (thread.posts[k].user_id == req.user.id){
                 isSameUser = true;
             }
         }
@@ -310,7 +310,7 @@ app.delete("/thread/:id", async (req , res) =>{
         return;
     }
 
-    if (thead.user_id != req.user.id){
+    if (thread.user_id != req.user.id){
         res.status(403).json({ message: "unarthorized"});
         return;
     }
@@ -324,7 +324,7 @@ app.delete("/thread/:id", async (req , res) =>{
         });
         return;
     }
-    res.status(200).json(thead);
+    res.status(200).json(thread);
 });
 
 module.exports = app;
