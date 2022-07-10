@@ -19,23 +19,6 @@ const postSchema = mongoose.Schema(
     }
 );
 
-const threadSchema = mongoose.Schema(
-    {
-        user_id: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-            required: true,
-        },
-        name: { type: String, required: true, default: ""},
-        description: { type: String, required: true, default: ""},
-        posts: { type: [postSchema], required: true, default: []},
-        category: {type: String, required: true, default: ""},
-    },
-    {
-        timestamps: true,
-    }
-);
-
 const userSchema = mongoose.Schema({
     username: {
         type: String,
@@ -49,6 +32,26 @@ const userSchema = mongoose.Schema({
     fullname: {type: String, required: true},
     password: {type: String, required: true},
 });
+
+const threadSchema = mongoose.Schema(
+    {
+        user_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
+        },
+        name: { type: String, required: true, default: ""},
+        description: { type: String, required: true, default: ""},
+        posts: { type: [postSchema], required: true, default: []},
+        category: {type: String, required: true, default: ""},
+        likes: { type: [mongoose.Schema.Types.ObjectId], required: true, default: []},
+        dislikes: { type: [mongoose.Schema.Types.ObjectId], required: true, default: []},
+    },
+    {
+        timestamps: true,
+    }
+);
+
 
 const User = mongoose.model("User",userSchema);
 const Thread = mongoose.model("Thread", threadSchema);
